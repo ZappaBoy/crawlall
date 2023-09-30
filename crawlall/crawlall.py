@@ -3,6 +3,8 @@ import importlib.metadata as metadata
 from argparse import Namespace
 
 from crawlall.models.log_level import LogLevel
+from crawlall.services.pattern_matcher import PatternMatcher
+from crawlall.services.searcher import Searcher
 from crawlall.shared.utils.logger import Logger
 
 __version__ = metadata.version(__package__ or __name__)
@@ -11,6 +13,8 @@ __version__ = metadata.version(__package__ or __name__)
 class Crawlall:
     def __init__(self):
         self.logger = Logger()
+        self.searcher = Searcher()
+        self.pattern_matcher = PatternMatcher()
         self.args = self.parse_args()
         self.set_verbosity()
 
@@ -18,6 +22,14 @@ class Crawlall:
         self.check_args()
         self.logger.info(f"Running...")
         self.print_args_info()
+        search_results = self.searcher.search(self.args.search)
+        regex = self.args.regex
+        if regex is None and self.args.pattern is not None:
+            regex = self.pattern_matcher.get_pattern_regex(self.args.pattern)
+        matched_results = self.pattern_matcher.match(search_results, regex=regex)
+        self.logger.info(f"Found {len(matched_results)} results:")
+        for result in matched_results:
+            self.logger.info(f"{result}")
 
     @staticmethod
     def parse_args() -> Namespace:
@@ -51,6 +63,8 @@ class Crawlall:
             error_message = "Neither regex nor pattern are defined. Please use one of them."
         if self.args.regex and self.args.pattern:
             error_message = "Both regex and pattern are defined. Please use only one of them."
+        if self.args.pattern and not self.pattern_matcher.pattern_exists(self.args.pattern):
+            error_message = f"Pattern '{self.args.pattern}' does not exist."
         if error_message:
             self.logger.error(error_message)
             exit(1)
