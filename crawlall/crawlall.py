@@ -15,8 +15,9 @@ class Crawlall:
         self.set_verbosity()
 
     def run(self):
+        self.check_args()
         self.logger.info(f"Running...")
-
+        self.print_args_info()
 
     @staticmethod
     def parse_args() -> Namespace:
@@ -33,7 +34,33 @@ class Crawlall:
         parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}',
                             help='Show version and exit.')
 
+        parser.add_argument('--search', '-s', required=True, type=str,
+                            help='Define search query (e.g. "Just Another SRL").')
+
+        parser.add_argument('--regex', '-r', required=False, type=str, default=None,
+                            help='Define regex pattern to match (e.g. "Just([A-Z]{7})").')
+
+        parser.add_argument('--pattern', '-p', required=False, type=str, default=None,
+                            help='Define pre-defined pattern to match (e.g. "email").')
+
         return parser.parse_args()
+
+    def check_args(self) -> None:
+        error_message = None
+        if not self.args.regex and not self.args.pattern:
+            error_message = "Neither regex nor pattern are defined. Please use one of them."
+        if self.args.regex and self.args.pattern:
+            error_message = "Both regex and pattern are defined. Please use only one of them."
+        if error_message:
+            self.logger.error(error_message)
+            exit(1)
+
+    def print_args_info(self) -> None:
+        self.logger.info(f"Search query: {self.args.search}")
+        if self.args.regex:
+            self.logger.info(f"Match Regex: {self.args.regex}")
+        if self.args.pattern:
+            self.logger.info(f"Match pattern: {self.args.pattern}")
 
     def set_verbosity(self) -> None:
         if self.args.quiet:
