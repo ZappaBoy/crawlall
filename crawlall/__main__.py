@@ -1,8 +1,8 @@
-from crawail import Crawail
+from crawlall import Crawlall
 
 
 def start():
-    Crawail().run()
+    Crawlall().run()
 
 
 if __name__ == '__main__':

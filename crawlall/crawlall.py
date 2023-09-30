@@ -2,26 +2,27 @@ import argparse
 import importlib.metadata as metadata
 from argparse import Namespace
 
-from crawail.models.log_level import LogLevel
-from crawail.shared.utils.logger import Logger
+from crawlall.models.log_level import LogLevel
+from crawlall.shared.utils.logger import Logger
 
 __version__ = metadata.version(__package__ or __name__)
 
 
-class Crawail:
+class Crawlall:
     def __init__(self):
         self.logger = Logger()
         self.args = self.parse_args()
         self.set_verbosity()
 
     def run(self):
-        self.logger.info(f"Running with the following options")
+        self.logger.info(f"Running...")
+
 
     @staticmethod
     def parse_args() -> Namespace:
         parser = argparse.ArgumentParser(
-            description="Crawail (craw-mail) is a simple mail crawler tool that uses google search engine supported "
-                        "features to find and collect mails.")
+            description="Crawlall (craw-all) is a simple crawler tool that uses google search engine supported "
+                        "features to find and collect required patterns.")
 
         parser.add_argument('--verbose', '-v', action='count', default=1,
                             help='Increase verbosity. Use more than once to increase verbosity level (e.g. -vvv).')

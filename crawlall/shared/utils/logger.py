@@ -1,6 +1,6 @@
 import logging
 
-from crawail.models.log_level import LogLevel
+from crawlall.models.log_level import LogLevel
 
 
 class Logger:
