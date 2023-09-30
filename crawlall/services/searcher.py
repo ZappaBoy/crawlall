@@ -4,6 +4,7 @@ import requests
 from googlesearch import search
 
 from crawlall.models.search.search_result import SearchResult
+from crawlall.shared.utils.common import get_requests_session
 from crawlall.shared.utils.logger import Logger
 
 
@@ -17,11 +18,15 @@ class Searcher:
         search_results = []
         for url in urls:
             self.logger.info(f"Gathering: {url}")
-            html = self.get_html(url)
-            search_results.append(SearchResult(url=url, html=html))
+            try:
+                html = self.get_html(url)
+                search_results.append(SearchResult(url=url, html=html))
+            except requests.exceptions.RequestException as e:
+                self.logger.error(f"Failed to gather: {url} ({e})")
         return search_results
 
     @staticmethod
     def get_html(url: str) -> str:
-        r = requests.get(url)
+        session = get_requests_session()
+        r = session.get(url)
         return r.text

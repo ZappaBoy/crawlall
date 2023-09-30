@@ -1,10 +1,14 @@
 import argparse
 import importlib.metadata as metadata
 from argparse import Namespace
+from typing import List
 
 from crawlall.models.log_level import LogLevel
+from crawlall.models.match.search_match import SearchMatch
+from crawlall.services.exporter import Exporter
 from crawlall.services.pattern_matcher import PatternMatcher
 from crawlall.services.searcher import Searcher
+from crawlall.shared.utils.common import get_only_matches
 from crawlall.shared.utils.logger import Logger
 
 __version__ = metadata.version(__package__ or __name__)
@@ -15,6 +19,7 @@ class Crawlall:
         self.logger = Logger()
         self.searcher = Searcher()
         self.pattern_matcher = PatternMatcher()
+        self.exporter = Exporter()
         self.args = self.parse_args()
         self.set_verbosity()
 
@@ -26,10 +31,19 @@ class Crawlall:
         regex = self.args.regex
         if regex is None and self.args.pattern is not None:
             regex = self.pattern_matcher.get_pattern_regex(self.args.pattern)
-        matched_results = self.pattern_matcher.match(search_results, regex=regex)
-        self.logger.info(f"Found {len(matched_results)} results:")
-        for result in matched_results:
-            self.logger.info(f"{result}")
+        search_matches = self.pattern_matcher.match(search_results, regex=regex)
+        self.show_results(search_matches)
+
+    def show_results(self, search_matches: List[SearchMatch]):
+        if self.args.only_matches:
+            search_matches = get_only_matches(search_matches)
+        else:
+            search_matches = [match.model_dump(mode="json") for match in search_matches]
+        if self.args.csv is not None:
+            self.logger.info(f"Saving results to CSV file...")
+            self.exporter.to_csv(search_matches, self.args.csv, ignore_header=self.args.only_matches)
+        for match in search_matches:
+            print(match)
 
     @staticmethod
     def parse_args() -> Namespace:
@@ -53,7 +67,13 @@ class Crawlall:
                             help='Define regex pattern to match (e.g. "Just([A-Z]{7})").')
 
         parser.add_argument('--pattern', '-p', required=False, type=str, default=None,
-                            help='Define pre-defined pattern to match (e.g. "email").')
+                            help='Use pre-defined pattern to match (e.g. "email").')
+
+        parser.add_argument('--csv', '-c', type=argparse.FileType('w', encoding='UTF-8'), required=False,
+                            help='Save results to CSV file.')
+
+        parser.add_argument('--only-matches', '-m', action=argparse.BooleanOptionalAction, default=False,
+                            required=False, help='Export only matches.')
 
         return parser.parse_args()
 
