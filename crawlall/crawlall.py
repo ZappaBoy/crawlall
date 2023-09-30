@@ -33,7 +33,8 @@ class Crawlall:
             "limit": self.args.limit,
             "delay": self.args.delay,
             "timeout": self.args.timeout,
-            "max_retries": self.args.retries
+            "max_retries": self.args.retries,
+            "rotate_user_agents": self.args.rotate_user_agents
         }
         search_results = self.searcher.search(self.args.search, **search_params)
         regex = self.args.regex
@@ -84,6 +85,8 @@ class Crawlall:
                             help=f'Timeout for each request. Default: {DEFAULT_TIMEOUT}')
         parser.add_argument('--retries', '-m', required=False, type=int, default=DEFAULT_MAX_RETRIES,
                             help=f'Max retries for each request. Default: {DEFAULT_MAX_RETRIES}')
+        parser.add_argument('--rotate-user-agents', '-g', action=argparse.BooleanOptionalAction, required=False,
+                            default=False, help=f'Rotate user agents to avoid bans. Default: False')
 
         return parser.parse_args()
 

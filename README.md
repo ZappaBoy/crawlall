@@ -34,7 +34,7 @@ crawlall --help
 
 ```shell
 usage: crawlall [-h] [--verbose] [--debug] [--quiet | --no-quiet | -q] [--version] --search SEARCH [--regex REGEX] [--pattern PATTERN] [--csv CSV] [--only-matches | --no-only-matches | -o] [--limit LIMIT] [--delay DELAY] [--timeout TIMEOUT]
-                [--retries RETRIES]
+                [--retries RETRIES] [--rotate-user-agents | --no-rotate-user-agents | -g]
 
 Crawlall (craw-all) is a simple crawler tool that uses google search engine supported features to find and collect required patterns.
 
@@ -62,7 +62,8 @@ options:
                         Timeout for each request. Default: 3
   --retries RETRIES, -m RETRIES
                         Max retries for each request. Default: 3
-
+  --rotate-user-agents, --no-rotate-user-agents, -g
+                        Rotate user agents to avoid bans. Default: False
 ```
 
 ## Examples
