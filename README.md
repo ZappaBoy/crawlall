@@ -84,8 +84,16 @@ crawlall --search "Just Another" --regex "[A-Z]{7}"
 ## Supported patterns
 
 ```shell
-- email -- [\w\.-]+@[\w\.-]+
-- phone -- \d{3}-\d{3}-\d{4}
+email: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
+url: "https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+"
+phone: "\d{3}-\d{3}-\d{4}"
+international_phone: "\+\d{1,3}\s?\(?\d{1,4}\)?[-.\s]?\d{1,9}"
+date: "\d{2}/\d{2}/\d{4}"
+ip_address: "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+hashtag: "#\w+"
+mention: "@\w+"
+euro_prices: "\€\d+(\.\d{2})?"
+dollar_price: "\$\d+(\.\d{2})?"
 ```
 
 ## Searching using Google Search Engine features

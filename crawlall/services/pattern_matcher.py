@@ -8,8 +8,16 @@ from crawlall.shared.exceptions.pattern_not_found import PatternNotFoundError
 from crawlall.shared.utils.logger import Logger
 
 patterns = {
-    "email": r"[\w\.-]+@[\w\.-]+",
+    "email": r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+",
+    "url": r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",
     "phone": r"\d{3}-\d{3}-\d{4}",
+    "international_phone": r"\+\d{1,3}\s?\(?\d{1,4}\)?[-.\s]?\d{1,9}",
+    "date": r"\d{2}/\d{2}/\d{4}",
+    "ip_address": r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",
+    "hashtag": r"#\w+",
+    "mention": r"@\w+",
+    "euro_prices": r"\€\d+(\.\d{2})?",
+    "dollar_price": r"\$\d+(\.\d{2})?"
 }
 
 
