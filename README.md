@@ -1,5 +1,7 @@
 # crawlall
-Crawlall (craw-all) is a simple mail crawler tool that uses google search engine supported features to find and collect required patterns.
+
+Crawlall (craw-all) is a simple crawler tool that uses google search engine supported features to find and collect
+required patterns.
 
 ## Installation
 
@@ -77,4 +79,26 @@ crawlall --search "Just Another" --pattern email --csv results.csv --only-matche
 
 ``` shell
 crawlall --search "Just Another" --regex "[A-Z]{7}"
+```
+
+## Supported patterns
+
+```shell
+- email -- [\w\.-]+@[\w\.-]+
+- phone -- \d{3}-\d{3}-\d{4}
+```
+
+## Searching using Google Dorks
+
+You can use Google Dorks to search for specific patterns. For example, to search for emails in a specific domain you can
+use the following query:
+
+```shell
+crawlall --search "site:justanother.cloud" --pattern email
+```
+
+Or a more complex query:
+
+```shell
+crawlall --search "site:justanother.cloud inurl:about" --pattern email
 ```

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "crawlall"
 version = "0.1.0"
-description = "Crawlall (craw-all) is a simple mail crawler tool that uses google search engine supported features to find and collect required patterns."
+description = "Crawlall (craw-all) is a simple crawler tool that uses google search engine supported features to find and collect required patterns."
 authors = ["ZappaBoy <federico.zappone@justanother.cloud>"]
 maintainers = ["ZappaBoy <federico.zappone@justanother.cloud>"]
 readme = "README.md"
