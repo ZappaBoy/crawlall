@@ -88,7 +88,7 @@ crawlall --search "Just Another" --regex "[A-Z]{7}"
 - phone -- \d{3}-\d{3}-\d{4}
 ```
 
-## Searching using Google Dorks
+## Searching using Google Search Engine features
 
 You can use Google Dorks to search for specific patterns. For example, to search for emails in a specific domain you can
 use the following query:
