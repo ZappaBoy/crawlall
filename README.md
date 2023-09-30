@@ -33,14 +33,15 @@ crawlall --help
 ```
 
 ```shell
-usage: crawlall [-h] [--verbose] [--debug] [--quiet | --no-quiet | -q] [--version] --search SEARCH [--regex REGEX] [--pattern PATTERN] [--csv CSV] [--only-matches | --no-only-matches | -m]
+usage: crawlall [-h] [--verbose] [--debug] [--quiet | --no-quiet | -q] [--version] --search SEARCH [--regex REGEX] [--pattern PATTERN] [--csv CSV] [--only-matches | --no-only-matches | -o] [--limit LIMIT] [--delay DELAY] [--timeout TIMEOUT]
+                [--retries RETRIES]
 
 Crawlall (craw-all) is a simple crawler tool that uses google search engine supported features to find and collect required patterns.
 
 options:
   -h, --help            show this help message and exit
   --verbose, -v         Increase verbosity. Use more than once to increase verbosity level (e.g. -vvv).
-  --debug, -d           Enable debug mode.
+  --debug               Enable debug mode.
   --quiet, --no-quiet, -q
                         Do not print any output/log
   --version             Show version and exit.
@@ -51,8 +52,17 @@ options:
   --pattern PATTERN, -p PATTERN
                         Use pre-defined pattern to match (e.g. "email").
   --csv CSV, -c CSV     Save results to CSV file.
-  --only-matches, --no-only-matches, -m
+  --only-matches, --no-only-matches, -o
                         Export only matches.
+  --limit LIMIT, -l LIMIT
+                        Limit number of site to crawl. Default: 10
+  --delay DELAY, -d DELAY
+                        Delay between each request. Default: 3
+  --timeout TIMEOUT, -t TIMEOUT
+                        Timeout for each request. Default: 3
+  --retries RETRIES, -m RETRIES
+                        Max retries for each request. Default: 3
+
 ```
 
 ## Examples
