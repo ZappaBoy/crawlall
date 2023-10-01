@@ -10,7 +10,7 @@ from crawlall.services.pattern_matcher import PatternMatcher
 from crawlall.services.searcher import Searcher
 from crawlall.shared.utils.common import get_only_matches
 from crawlall.shared.utils.constants import DEFAULT_VERBOSITY, DEFAULT_LIMIT, DEFAULT_DELAY, DEFAULT_TIMEOUT, \
-    DEFAULT_MAX_RETRIES
+    DEFAULT_MAX_RETRIES, DEFAULT_IP_ROTATOR_COUNTRIES, DEFAULT_SEARCH_ENGINE
 from crawlall.shared.utils.logger import Logger
 
 __version__ = metadata.version(__package__ or __name__)
@@ -34,7 +34,11 @@ class Crawlall:
             "delay": self.args.delay,
             "timeout": self.args.timeout,
             "max_retries": self.args.retries,
-            "rotate_user_agents": self.args.rotate_user_agents
+            "rotate_user_agents": self.args.rotate_user_agents,
+            "rotate_search_ip": self.args.rotate_search_ip,
+            "rotate_connection_ip": self.args.rotate_connection_ip,
+            "rotate_ip_countries": self.args.rotate_ip_countries,
+            "search_engine": self.args.search_engine
         }
         search_results = self.searcher.search(self.args.search, **search_params)
         regex = self.args.regex
@@ -63,8 +67,8 @@ class Crawlall:
                             help='Increase verbosity. Use more than once to increase verbosity level (e.g. -vvv).')
         parser.add_argument('--debug', action='store_true', default=False,
                             help='Enable debug mode.')
-        parser.add_argument('--quiet', '-q', action=argparse.BooleanOptionalAction, default=False, required=False,
-                            help='Do not print any output/log')
+        parser.add_argument('--quiet', '-q', action=argparse.BooleanOptionalAction, default=False,
+                            required=False, help='Do not print any output/log')
         parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}',
                             help='Show version and exit.')
         parser.add_argument('--search', '-s', required=True, type=str,
@@ -73,10 +77,10 @@ class Crawlall:
                             help='Define regex pattern to match (e.g. "Just([A-Z]{7})").')
         parser.add_argument('--pattern', '-p', required=False, type=str, default=None,
                             help='Use pre-defined pattern to match (e.g. "email").')
-        parser.add_argument('--csv', '-c', type=argparse.FileType('w', encoding='UTF-8'), required=False,
-                            help='Save results to CSV file.')
-        parser.add_argument('--only-matches', '-o', action=argparse.BooleanOptionalAction, default=False,
-                            required=False, help='Export only matches.')
+        parser.add_argument('--csv', '-c', type=argparse.FileType('w', encoding='UTF-8'),
+                            required=False, help='Save results to CSV file.')
+        parser.add_argument('--only-matches', '-o', action=argparse.BooleanOptionalAction,
+                            default=False, required=False, help='Export only matches.')
         parser.add_argument('--limit', '-l', required=False, type=int, default=DEFAULT_LIMIT,
                             help=f'Limit number of site to crawl. Default: {DEFAULT_LIMIT}')
         parser.add_argument('--delay', '-d', required=False, type=int, default=DEFAULT_DELAY,
@@ -85,8 +89,20 @@ class Crawlall:
                             help=f'Timeout for each request. Default: {DEFAULT_TIMEOUT}')
         parser.add_argument('--retries', '-m', required=False, type=int, default=DEFAULT_MAX_RETRIES,
                             help=f'Max retries for each request. Default: {DEFAULT_MAX_RETRIES}')
-        parser.add_argument('--rotate-user-agents', '-g', action=argparse.BooleanOptionalAction, required=False,
-                            default=False, help=f'Rotate user agents to avoid bans. Default: False')
+        parser.add_argument('--rotate-user-agents', '-ru', action=argparse.BooleanOptionalAction,
+                            required=False, default=False, help=f'Rotate user agents to avoid bans. Default: False')
+        parser.add_argument('--rotate-search-ip', '-rsi', action=argparse.BooleanOptionalAction,
+                            required=False, default=False,
+                            help=f'Rotate ip address during url searching to avoid bans. Default: False')
+        parser.add_argument('--rotate-connection-ip', '-rci', action=argparse.BooleanOptionalAction,
+                            required=False, default=False,
+                            help=f'Rotate ip address during url page connection to avoid bans. Default: False')
+        parser.add_argument('--rotate-ip-countries', '-rc', nargs='+', default=DEFAULT_IP_ROTATOR_COUNTRIES,
+                            required=False, help=f'Define countries of proxies for ip address rotator. '
+                                                 f'Default: {DEFAULT_IP_ROTATOR_COUNTRIES}')
+        parser.add_argument('--search-engine', '-se', required=False, type=str, default=DEFAULT_SEARCH_ENGINE,
+                            help=f'Define search engine to use (e.g. "google" or "duckduckgo"). '
+                                 f'Default: "{DEFAULT_SEARCH_ENGINE}"')
 
         return parser.parse_args()
 
@@ -98,6 +114,9 @@ class Crawlall:
             error_message = "Both regex and pattern are defined. Please use only one of them."
         if self.args.pattern and not self.pattern_matcher.pattern_exists(self.args.pattern):
             error_message = f"Pattern '{self.args.pattern}' does not exist."
+        if self.args.search_engine and not self.searcher.search_engine_exists(self.args.search_engine):
+            error_message = f"Engine '{self.args.search_engine}' does not exist."
+
         if error_message:
             self.logger.error(error_message)
             exit(1)
